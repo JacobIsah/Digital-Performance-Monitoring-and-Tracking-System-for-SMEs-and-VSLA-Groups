@@ -2,13 +2,50 @@
 
 ## 1. Point it at your backend
 
-Before deploying, the PWA needs to know your Elastic Beanstalk API URL.
-Two ways to set it:
+Before deploying, the PWA needs to know your API URL. Amplify serves the
+frontend over HTTPS, so this URL must also be HTTPS — browsers block a
+HTTPS page from calling a plain HTTP API ("mixed content"). A default
+Elastic Beanstalk single-instance environment only speaks HTTP, so put a
+CloudFront distribution in front of it first (see "1a. HTTPS for the EB
+backend" below) and use the CloudFront domain here instead of the raw EB URL.
+
+Two ways to set the value once you have it:
 
 - **Local testing**: copy `.env.example` to `.env` and fill in
-  `VITE_API_BASE_URL=http://<your-eb-url>/api/v1`
+  `VITE_API_BASE_URL=https://<your-cloudfront-domain>.cloudfront.net/api/v1`
 - **Amplify (production)**: set it as an environment variable in the Amplify
   Console instead (see Step 4) — don't commit real URLs to `.env`.
+
+## 1a. HTTPS for the EB backend (CloudFront proxy)
+
+A single-instance EB environment has no TLS listener, and ACM can't issue a
+certificate for AWS-owned `*.elasticbeanstalk.com` domains. The simplest fix
+that doesn't require owning a custom domain is a CloudFront distribution
+that terminates HTTPS on its own default `*.cloudfront.net` domain and
+forwards to the EB environment over plain HTTP.
+
+Console: **CloudFront → Create distribution**
+
+- Origin domain: your EB environment's URL (e.g.
+  `nexode-backend-env.eba-xxxxx.us-east-1.elasticbeanstalk.com`)
+- Origin protocol policy: **HTTP only**
+- Viewer protocol policy: **Redirect HTTP to HTTPS**
+- Allowed methods: **GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE**
+- Cache policy: **CachingDisabled** (API responses shouldn't be cached)
+- Origin request policy: **AllViewer** (forwards auth headers/cookies through)
+
+CLI equivalent, using the AWS CLI (`aws configure` / `aws sso login` first):
+
+```bash
+aws cloudfront create-distribution \
+  --distribution-config file://cloudfront-eb-proxy.json
+```
+
+with `cloudfront-eb-proxy.json` containing the origin/cache-behavior config
+above (`OriginProtocolPolicy: http-only`, `ViewerProtocolPolicy:
+redirect-to-https`, the 7 allowed methods, CachingDisabled + AllViewer
+managed policy IDs). Takes a few minutes to deploy; the output's
+`DomainName` field is what goes into `VITE_API_BASE_URL`.
 
 ## 2. CORS on the backend
 
