@@ -32,7 +32,15 @@ export default function Login({ onLoggedIn }) {
 
         <div className="field">
           <label>Username</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} autoFocus />
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoFocus
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck="false"
+          />
         </div>
         <div className="field">
           <label>Password</label>
