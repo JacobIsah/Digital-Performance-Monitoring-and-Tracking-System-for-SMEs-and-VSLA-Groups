@@ -24,7 +24,7 @@ export default function TopBar() {
 
   return (
     <div className="topbar">
-      <div className="topbar-title">NEXODE <span>Field</span></div>
+      <div className="topbar-title">AgroAid <span>Farms and Services</span></div>
       <div className="topbar-status">
         {pendingCount > 0 && <span className="topbar-badge">{pendingCount} queued</span>}
         <span className={`status-dot ${online ? 'online' : 'offline'}`} />
