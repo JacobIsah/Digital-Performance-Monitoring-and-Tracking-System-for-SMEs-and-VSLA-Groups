@@ -62,7 +62,7 @@ button { font-family: inherit; }
   display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text);
 }
 .field input[type="text"], .field input[type="number"], .field input[type="date"],
-.field select, .field textarea {
+.field input[type="password"], .field select, .field textarea {
   width: 100%; padding: 13px 14px; border: 1px solid var(--border); border-radius: 10px;
   font-size: 16px; font-family: var(--font-body); background: var(--surface);
 }

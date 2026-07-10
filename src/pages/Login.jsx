@@ -27,7 +27,7 @@ export default function Login({ onLoggedIn }) {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={handleSubmit}>
-        <div className="login-logo">NEXODE <span>Field</span></div>
+        <div className="login-logo">AgroAid <span>Farms and Services</span></div>
         <p className="login-sub">Sign in to start collecting field data — works offline once you're in.</p>
 
         <div className="field">
