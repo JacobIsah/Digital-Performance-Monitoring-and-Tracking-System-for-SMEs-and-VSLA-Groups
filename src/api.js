@@ -113,13 +113,5 @@ export async function fetchBeneficiaries() {
 }
 
 export async function fetchGroups() {
-  // Groups aren't behind a dedicated list endpoint in the backend yet, so
-  // this derives the set from VSLA Performance records as a fallback.
-  // Point this at a real /api/v1/groups/ endpoint once one exists server-side.
-  const rows = await fetchAllPages('/vsla-performance/?page_size=500');
-  const seen = new Map();
-  rows.forEach((r) => {
-    if (r.group && !seen.has(r.group)) seen.set(r.group, { id: r.group });
-  });
-  return Array.from(seen.values());
+  return fetchAllPages('/groups/?page_size=500');
 }
